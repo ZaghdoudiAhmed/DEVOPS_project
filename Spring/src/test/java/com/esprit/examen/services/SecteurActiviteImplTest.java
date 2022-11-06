@@ -1,91 +1,52 @@
 package com.esprit.examen.services;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import com.esprit.examen.entities.SecteurActivite;
-import com.esprit.examen.repositories.SecteurActiviteRepository;
+import com.esprit.examen.entities.Facture;
+import com.esprit.examen.repositories.FactureRepository;
+
+import java.util.Date;
+
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
-public class SecteurActiviteImplTest {
+class FactureServiceImplTest {
+    @InjectMocks
+    FactureServiceImpl factureService ;
 
-	@Mock
-	SecteurActiviteRepository secteurActiviteRepository;
-	
-	@InjectMocks
-	SecteurActiviteServiceImpl secteurActiviteServiceImpl;
-	
-	
-	
-	//on a initialiser un objet sa pour tester avec
-	SecteurActivite sa = new SecteurActivite();
-	List<SecteurActivite> secteur = new ArrayList<SecteurActivite>() {
-		{
-		add (new SecteurActivite((long) 3 ,"quatre","secteur2", null));
-		add (new SecteurActivite((long) 4 , "sept","secteur3", null));
-		add (new SecteurActivite((long) 5, "vingt","secteur5", null));
+    @Mock
+    FactureRepository factureRepository ;
 
-		
-		}
-		};
-	
-	
-	@Test
-	void testRetrieveAllSecteurActivite() {
-		Mockito.doReturn(secteur).when(secteurActiviteRepository).findAll();
-        List<SecteurActivite> secteurAc = secteurActiviteServiceImpl.retrieveAllSecteurActivite();
-		Assertions.assertNotNull(secteurAc);	
+    @Test
+    public void testGetallFactures(){
+        when(factureRepository. findAll()).thenReturn(Stream
+                .of(new Facture(), new Facture()).collect(Collectors.toList()));
+        assertEquals(2, factureService.retrieveAllFactures().size());
+    }
 
+    @Test
+    public void saveFactureTest() {
+        Facture f = new Facture(29.75f,153.31f,new Date("19/10/2022"),new Date("21/10/2022"),true,null,null,null);
+        when(factureRepository.save(f)).thenReturn(f);
+        assertEquals(f, factureService.addFacture(f));
+    }
 
-		
-	}	
-
-	@Test
-	void testAddSecteurActivite() {
-		SecteurActivite sa = new SecteurActivite();
-		Mockito.when(secteurActiviteRepository.save(Mockito.any(SecteurActivite.class))).thenReturn(sa);
-	    SecteurActivite sec=secteurActiviteServiceImpl.addSecteurActivite(sa);
-		Assertions.assertNotNull(sec);	
-	}
-	
-	@Test
-	void testDeleteSecteurActivite() {
-		secteurActiviteServiceImpl.deleteSecteurActivite((long)2);
-		Mockito.verify(secteurActiviteRepository).deleteById((long)2);
-
-		
-	}
-
-	@Test
-	void testUpdateSecteurActivite() {
-		Mockito.when(secteurActiviteRepository.save(Mockito.any(SecteurActivite.class))).thenReturn(sa);
-		sa.setLibelleSecteurActivite("activite");
-		SecteurActivite sec=secteurActiviteServiceImpl.updateSecteurActivite(sa);
-		assertNotNull(sec);
-		assertEquals("activite", sa.getLibelleSecteurActivite());
-
-	}
-
-	@Test
-	void testRetrieveSecteurActivite() {	
-		Mockito.when(secteurActiviteRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(sa));
-		SecteurActivite saa = secteurActiviteServiceImpl.retrieveSecteurActivite((long)2);
-		Assertions.assertNotNull(saa);	
-		}
+    @Test
+    public void retrieveFactureTest() {
+        Long id = (long) 3;
+        when(factureRepository.findById(id)).thenReturn(Optional.of(new Facture(32.65f,164.84f,new Date("15/10/2022"),new Date("23/10/2022"),true,null,null,null)));
+        Facture f = factureService.retrieveFacture(id);
+        assertNotNull(f);
+        verify(factureRepository).findById(Mockito.anyLong());
+    }
 }
