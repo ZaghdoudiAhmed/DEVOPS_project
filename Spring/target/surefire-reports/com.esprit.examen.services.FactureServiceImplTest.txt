@@ -1,8 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.esprit.examen.services.FactureServiceImplTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 10.174 s <<< FAILURE! - in com.esprit.examen.services.FactureServiceImplTest
-testassignOperateurToFacture  Time elapsed: 0.058 s  <<< ERROR!
-java.lang.NullPointerException
-	at com.esprit.examen.services.FactureServiceImplTest.testassignOperateurToFacture(FactureServiceImplTest.java:41)
-
